@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Multilingual Communication</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Secure Multilingual Communication Platform</h1>
+
+        {% if not session.get("authenticated") %}
+        <!-- Step 1: User Login -->
+        <h2>Login</h2>
+        <form method="POST" action="/">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required>
+
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+
+            <button type="submit">Login</button>
+        </form>
+
+        {% if error %}
+        <p class="error">{{ error }}</p>
+        {% endif %}
+
+        {% elif not session.get("mfa_verified") %}
+        <!-- Step 2: MFA Token Input -->
+        <h2>MFA Verification</h2>
+        <form method="POST" action="/mfa">
+            <label for="mfa_token">Enter MFA Token:</label>
+            <input type="text" id="mfa_token" name="mfa_token" required>
+
+            <button type="submit">Verify MFA</button>
+        </form>
+
+        {% if error %}
+        <p class="error">{{ error }}</p>
+        {% endif %}
+
+        {% else %}
+        <!-- Step 3: Message Translation and Encryption -->
+        <h2>Secure Message Translation</h2>
+        <form method="POST" action="/secure_message">
+            <label for="message">Enter your message:</label>
+            <textarea name="message" id="message" required></textarea>
+
+            <label for="language">Select Translation Language:</label>
+            <select name="language" id="language" required>
+                <option value="en">English</option>
+                <option value="es">Spanish</option>
+                <option value="fr">French</option>
+                <option value="de">German</option>
+                <option value="zh-cn">Chinese</option>
+            </select>
+
+            <button type="submit">Translate & Secure</button>
+        </form>
+
+        {% if translated_message %}
+        <div class="result">
+            <h2>Results:</h2>
+            <p><strong>Translated Message:</strong> {{ translated_message }}</p>
+            <p><strong>Message Hash (Integrity Check):</strong> {{ original_hash }}</p>
+            <p><strong>Encrypted Message:</strong> {{ encrypted_message }}</p>
+            <p><strong>Decrypted Message:</strong> {{ decrypted_message }}</p>
+        </div>
+        {% endif %}
+        {% endif %}
+    </div>
+</body>
+</html>
